@@ -1,0 +1,25 @@
+# configs/default.yaml
+
+experiment:
+  name: "ecg_wgan"
+
+data:
+  physionet_path: "Rawdata/Physionet"
+  seq_len: 1248
+  sampling_rate: 360   # MIT-BIH default
+  lowcut: 0.5
+  highcut: 40.0
+  lead_index: 0
+
+model:
+  latent_dim: 100
+
+training:
+  batch_size: 64
+  epochs: 3
+  lr: 0.0001
+  n_critic: 5
+  gp_lambda: 10.0
+
+monitoring:
+  early_stopping_patience: 15

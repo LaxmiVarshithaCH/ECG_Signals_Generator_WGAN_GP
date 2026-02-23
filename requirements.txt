@@ -1,0 +1,11 @@
+torch
+numpy
+scipy
+wfdb
+matplotlib
+pyyaml
+tqdm
+streamlit
+fastapi
+uvicorn
+scikit-learn
