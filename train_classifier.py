@@ -1,4 +1,6 @@
 import os
+import json
+from datetime import datetime
 import numpy as np
 import torch
 import torch.nn as nn
@@ -9,7 +11,11 @@ from sklearn.metrics import classification_report, confusion_matrix
 from data.physionet_loader import load_physionet
 from models.classifier import ECGClassifier
 
+EXPERIMENT_ID = "exp_20260222_163138"
 
+BASE_EVAL_DIR = "evaluation_results"
+SAVE_DIR = os.path.join(BASE_EVAL_DIR, EXPERIMENT_ID)
+os.makedirs(SAVE_DIR, exist_ok=True)
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 SEQ_LEN = 1248
 BATCH_SIZE = 32
@@ -132,8 +138,51 @@ with torch.no_grad():
         all_preds.extend(preds)
         all_labels.extend(labels.numpy())
 
+from sklearn.metrics import accuracy_score
+
+report = classification_report(all_labels, all_preds, output_dict=True)
+conf_matrix = confusion_matrix(all_labels, all_preds)
+accuracy = accuracy_score(all_labels, all_preds)
+
 print("\nClassification Report:")
 print(classification_report(all_labels, all_preds))
 
 print("\nConfusion Matrix:")
-print(confusion_matrix(all_labels, all_preds))
+print(conf_matrix)
+
+# ============================
+# SAVE METRICS
+# ============================
+
+classifier_metrics = {
+    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    "experiment_id": EXPERIMENT_ID,
+    "accuracy": float(accuracy),
+    "precision_class_0": float(report["0"]["precision"]),
+    "recall_class_0": float(report["0"]["recall"]),
+    "precision_class_1": float(report["1"]["precision"]),
+    "recall_class_1": float(report["1"]["recall"]),
+}
+
+with open(os.path.join(SAVE_DIR, "classifier_metrics.json"), "w") as f:
+    json.dump(classifier_metrics, f, indent=4)
+
+# Save readable summary
+with open(os.path.join(SAVE_DIR, "classifier_summary.txt"), "w") as f:
+    f.write("ECG WGAN Classifier Evaluation\n")
+    f.write("=" * 40 + "\n")
+    for k, v in classifier_metrics.items():
+        f.write(f"{k}: {v}\n")
+    f.write("\nConfusion Matrix:\n")
+    f.write(str(conf_matrix))
+
+# ============================
+# SAVE MODEL
+# ============================
+
+torch.save(
+    model.state_dict(),
+    os.path.join(SAVE_DIR, "classifier_model.pt")
+)
+
+print("\nClassifier results saved to:", SAVE_DIR)
