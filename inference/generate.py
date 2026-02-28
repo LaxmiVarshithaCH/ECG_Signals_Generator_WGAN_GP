@@ -1,5 +1,3 @@
-# generate.py
-
 import torch
 import os
 import numpy as np
@@ -12,8 +10,9 @@ from models.generator import Generator
 # CONFIG
 # ============================
 
-EXPERIMENT_ID = "exp_20260222_163138"
-BASE_DIR = "experiments"   # because you're inside Project4 root
+EXPERIMENT_ID = "exp_20260223_084850"
+BASE_DIR = "experiments"
+
 LATENT_DIM = 100
 SEQ_LEN = 1248
 N_SAMPLES = 10
@@ -32,9 +31,19 @@ CHECKPOINT_PATH = os.path.join(
 
 device = torch.device("cpu")
 
-generator = Generator(seq_len=SEQ_LEN, latent_dim=LATENT_DIM).to(device)
+generator = Generator(
+    seq_len=SEQ_LEN,
+    latent_dim=LATENT_DIM
+).to(device)
 
-state_dict = torch.load(CHECKPOINT_PATH, map_location=device)
+
+checkpoint = torch.load(CHECKPOINT_PATH, map_location=device)
+
+if "generator" in checkpoint:
+    state_dict = checkpoint["generator"]
+else:
+    state_dict = checkpoint
+
 generator.load_state_dict(state_dict)
 
 generator.eval()
@@ -69,17 +78,18 @@ for i in range(N_SAMPLES):
 # GENERATE LARGE DATASET
 # ============================
 
-N_SAMPLES = 2000   # generate 2000 fake ECGs
+N_SAMPLES = 2000
 
 z = torch.randn(N_SAMPLES, LATENT_DIM).to(device)
 
 with torch.no_grad():
     fake_ecg = generator(z).cpu().numpy()
 
-print("Generated shape:", fake_ecg.shape)
-
-# Save
 os.makedirs("generated_data", exist_ok=True)
-np.save("generated_data/generated_ecg_2000.npy", fake_ecg)
+
+np.save(
+    "generated_data/generated_ecg_2000.npy",
+    fake_ecg
+)
 
 print("Saved 2000 fake ECG samples.")

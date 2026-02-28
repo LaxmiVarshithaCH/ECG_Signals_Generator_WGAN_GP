@@ -10,15 +10,18 @@ from models.generator import Generator
 
 app = FastAPI()
 
-MODEL_PATH = "experiments/exp_20260222_163138/checkpoints/best_model.pt"
+MODEL_PATH = "experiments/exp_20260223_084850/checkpoints/best_model.pt"
 LATENT_DIM = 100
 SEQ_LEN = 1248
 
 DEVICE = torch.device("cpu")
-
 generator = Generator(seq_len=SEQ_LEN, latent_dim=LATENT_DIM)
 checkpoint = torch.load(MODEL_PATH, map_location=DEVICE)
-generator.load_state_dict(checkpoint)
+if "generator" in checkpoint:
+    state_dict = checkpoint["generator"]
+else:
+    state_dict = checkpoint
+generator.load_state_dict(state_dict)
 generator.eval()
 
 

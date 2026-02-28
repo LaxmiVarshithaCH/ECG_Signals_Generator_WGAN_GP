@@ -12,7 +12,7 @@ from data.physionet_loader import load_physionet
 # CONFIG
 # ============================
 
-EXPERIMENT_ID = "exp_20260222_163138"
+EXPERIMENT_ID = "exp_20260223_084850"
 
 BASE_EVAL_DIR = "evaluation_results"
 SAVE_DIR = os.path.join(BASE_EVAL_DIR, EXPERIMENT_ID)
