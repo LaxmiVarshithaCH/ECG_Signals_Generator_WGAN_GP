@@ -107,7 +107,7 @@ flowchart TD
     C --> E[Critic]
 
     D --> F[Synthetic ECG Signals]
-    F --> G[Evaluation (waveform / PSD / stats)]
+    F --> G[Evaluation - waveform / PSD / stats]
     G --> H[Visualization & Metrics]
 
     D --> I[Deployment]
@@ -150,9 +150,9 @@ A compact 1‑D WGAN‑GP models ECG waveforms. The two core network architectur
 
 ```mermaid
 flowchart LR
-    z[Latent vector z (100)] --> fc[Fully connected
-(→ 128 × (seq_len/8))]
-    fc --> reshape[Reshape to (B,128,seq_len/8)]
+    z[Latent vector z=100] --> fc[Fully connected
+→ 128 × seq_len/8]
+    fc --> reshape[Reshape to B,128,seq_len/8]
     reshape --> up1[Upsample ×2
 Conv1d 128→128, k=5, p=2
 BatchNorm1d + ReLU]
@@ -164,7 +164,7 @@ Conv1d 64→32, k=5, p=2
 BatchNorm1d + ReLU]
     up3 --> outconv[Conv1d 32→1, k=7, p=3
 Tanh]
-    outconv --> output[Output ECG (1×1248)]
+    outconv --> output[Output ECG 1×1248]
 ```
 
 - **Input:** latent vector `z ∈ ℝ^{100}` sampled from N(0,1)
