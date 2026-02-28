@@ -176,7 +176,7 @@ Tanh]
 
 ```mermaid
 flowchart LR
-    input[Input ECG (1×1248)] --> c1[Conv1d 1→32, k=5, s=2, p=2
+    input[Input ECG - 1×1248] --> c1[Conv1d 1→32, k=5, s=2, p=2
 LeakyReLU]
     c1 --> c2[Conv1d 32→64, k=5, s=2, p=2
 LeakyReLU]
