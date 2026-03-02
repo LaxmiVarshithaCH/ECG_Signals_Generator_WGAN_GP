@@ -405,4 +405,3 @@ python inference/generate.py
 
 ---
 
-*This README was generated with reference to your codebase and best open-source practices. Update as your project evolves!*
